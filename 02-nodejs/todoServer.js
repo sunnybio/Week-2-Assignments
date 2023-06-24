@@ -46,4 +46,76 @@ const app = express();
 
 app.use(bodyParser.json());
 
+todos = [{ "id": 1, "details": "sdasdasd" }]
+
+app.get("/todos", (req, res) => {
+  res.json(todos)
+
+})
+
+app.post("/todos", (req, res) => {
+  const newTodo = {
+    id: Math.floor(Math.random() * 1000000), // unique random id
+    title: req.body.title,
+    description: req.body.description
+  };
+  todos.push(newTodo);
+  res.status(201).json(newTodo);
+
+})
+
+
+
+app.delete("/todos/:id", (req, res) => {
+  let id = Number(req.params.id)
+
+
+  todos = todos.filter(todo => todo.id !== id)
+  res.status(204).send("deleted")
+
+})
+app.get("/todos/:id", (req, res) => {
+  let id = Number(req.params.id)
+
+  let todoItem = todos.find((todo) => {
+    if (todo.id === id) {
+      return true
+    }
+  })
+  if (todoItem === undefined) {
+    res.status(404).send("not found")
+  }
+  res.status(200).json(todoItem)
+
+
+})
+app.put("/todos/:id", (req, res) => {
+
+  let id = Number(req.params.id)
+
+  let index = todos.findIndex(todo => todo.id === id)
+
+  let newtodo = {
+    id: id,
+    title: req.body.title,
+    description: req.body.description
+  }
+  if (index === -1) {
+    res.status(404).send("id not found")
+  }
+  todos[index] = newtodo
+  res.status(204).send("deleted")
+
+
+
+})
+
 module.exports = app;
+
+port = 3000;
+
+function started() {
+  console.log(`Example app listening on port ${port}`)
+}
+
+app.listen(port, started)
